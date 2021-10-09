@@ -3,7 +3,7 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 const mysql = require('mysql2');
 const cTable = require('console.table');
-require('dotenv').config()
+
 const db = require('db')
 db.connect({
     host: process.env.DB_HOST,
@@ -111,9 +111,32 @@ const addEmployee = [
     }
 ]
 
-// function init() {
-//     console.log("Welcome to employee manager");
-//     inquirer
-//     .prompt( )
+function init() {
+    console.log("Welcome to employee manager");
+    inquirer
+    .prompt(questionMain)
+    .then((response) => {
+        if (response.new ==="View all employees") {
+            
+        } else if (response.new ==="Add Employee") {
+            
+        } else if (response.new ==="Update Employee Role") {
+            
+        } else if (response.new ==="View All Roles") {
+            
+        } else if (response.new ==="Add Role") {
+            
+        } else if (response.new ==="View All Departments") {
+            
+        } else if (response.new ==="Add Department") {
+            
+        } else if (response.new ==="Quit") {
+            
+        } else {
 
-// }
+        }
+    })
+
+}
+
+init();
