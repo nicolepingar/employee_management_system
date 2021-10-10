@@ -20,7 +20,7 @@ const questionMain = [
     }
 ]
 
-const addDepartment = [
+const addDepartmentQ = [
     {
         type: 'input',
         name: 'department name',
@@ -35,7 +35,7 @@ const addDepartment = [
         }
     }
 ]
-const addRole = [
+const addRoleQ = [
     {
         type: 'input',
         name: 'role name',
@@ -70,7 +70,7 @@ const addRole = [
     }
 ]
 
-const addEmployee = [
+const addEmployeeQ = [
     {
         type: 'input',
         name: 'first name',
@@ -114,29 +114,51 @@ const addEmployee = [
 function init() {
     console.log("Welcome to employee manager");
     inquirer
-    .prompt(questionMain)
-    .then((response) => {
-        if (response.new ==="View all employees") {
-            
-        } else if (response.new ==="Add Employee") {
-            
-        } else if (response.new ==="Update Employee Role") {
-            
-        } else if (response.new ==="View All Roles") {
-            
-        } else if (response.new ==="Add Role") {
-            
-        } else if (response.new ==="View All Departments") {
-            
-        } else if (response.new ==="Add Department") {
-            
-        } else if (response.new ==="Quit") {
-            
-        } else {
+        .prompt(questionMain)
+        .then((response) => {
+            if (response.new === "View all employees") {
 
-        }
-    })
+            } else if (response.new === "Add Employee") {
+                addEmployee();
+            } else if (response.new === "Update Employee Role") {
 
+            } else if (response.new === "View All Roles") {
+
+            } else if (response.new === "Add Role") {
+                addRole();
+            } else if (response.new === "View All Departments") {
+
+            } else if (response.new === "Add Department") {
+                addDepartment();
+            } else if (response.new === "Quit") {
+
+            } else {
+
+            } 
+        })
 }
+function addEmployee() {
+    inquirer
+        .prompt(addEmployeeQ)
+        .then((response) => {
+
+        })
+}
+function addRole() {
+    inquirer
+    .prompt(addRoleQ)
+    .then((response) => {
+
+    })
+}
+function addDepartment() {
+    inquirer
+    .prompt(addDepartmentQ)
+    .then((response) => {
+
+    })
+}
+
+
 
 init();
