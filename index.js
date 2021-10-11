@@ -1,22 +1,15 @@
 // required packages for the application
 const inquirer = require('inquirer');
 const fs = require('fs');
-const mysql = require('mysql2');
 const cTable = require('console.table');
-
-const db = require('db')
-db.connect({
-    host: process.env.DB_HOST,
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS
-});
+const db = require('./config/config')
 
 const questionMain = [
     {
         type: 'list',
         name: 'new',
         message: "What would you like to do?",
-        choices: ["View all employees", "Add Employee", "Update Employee Role", "View All Roles", "Add Role", "View All Departments", "Add Department", "Quit", "View All Employees"]
+        choices: ["View all employees", "Add Employee", "Update Employee Role", "View All Roles", "Add Role", "View All Departments", "Add Department", "Quit"]
     }
 ]
 
@@ -117,25 +110,32 @@ function init() {
         .prompt(questionMain)
         .then((response) => {
             if (response.new === "View all employees") {
-
+                viewAllEmp();
             } else if (response.new === "Add Employee") {
                 addEmployee();
             } else if (response.new === "Update Employee Role") {
 
             } else if (response.new === "View All Roles") {
-
+                viewAllRoles();
             } else if (response.new === "Add Role") {
                 addRole();
             } else if (response.new === "View All Departments") {
-
+                viewAllDept();
             } else if (response.new === "Add Department") {
                 addDepartment();
-            } else if (response.new === "Quit") {
-
             } else {
-
-            } 
+                quit();
+            }
         })
+}
+function viewAllEmp() {
+    db.query('SELECT * FROM employee', function (err, results) {
+        if (err) {
+            console.log(err);
+        }
+        console.table(results);
+    })
+    init();
 }
 function addEmployee() {
     inquirer
@@ -144,21 +144,40 @@ function addEmployee() {
 
         })
 }
+function viewAllRoles() {
+    db.query('SELECT * FROM _role', function (err, results) {
+        if (err) {
+            console.log(err);
+        }
+        console.table(results);
+    })
+    init();
+
+}
 function addRole() {
     inquirer
-    .prompt(addRoleQ)
-    .then((response) => {
+        .prompt(addRoleQ)
+        .then((response) => {
 
+        })
+}
+function viewAllDept() {
+    db.query('SELECT * FROM department', function (err, results) {
+        if (err) {
+            console.log(err);
+        }
+        console.table(results);
     })
+    init();
 }
 function addDepartment() {
     inquirer
-    .prompt(addDepartmentQ)
-    .then((response) => {
+        .prompt(addDepartmentQ)
+        .then((response) => {
 
-    })
+        })
 }
-
-
-
+function quit() {
+    process.exit();
+}
 init();
