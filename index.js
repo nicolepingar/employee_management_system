@@ -108,24 +108,19 @@ function init() {
         .then((response) => {
             if (response.new === "View all employees") {
                 viewAllEmp();
-            }
-            else if (response.new === "Add Employee") {
+            } else if (response.new === "Add Employee") {
                 addEmployee();
-            } //else if (response.new === "Update Employee Role") {
-
-            // } 
-            else if (response.new === "View All Roles") {
+            } else if (response.new === "Update Employee Role") {
+                updateRole();
+            } else if (response.new === "View All Roles") {
                 viewAllRoles();
-            }
-            //else if (response.new === "Add Role") {
-            //     addRole();
-            //} 
-            else if (response.new === "View All Departments") {
+            } else if (response.new === "Add Role") {
+                addRole();
+            } else if (response.new === "View All Departments") {
                 viewAllDept();
             } else if (response.new === "Add Department") {
                 addDepartment();
-            }
-            else {
+            } else {
                 quit();
             }
         })
@@ -157,11 +152,50 @@ function addEmployee() {
                 }
                 // console.table(results);
                 init();
-
-
             }
             )
         })
+}
+function updateRole() {
+    db.query(`SELECT employee.first_name, employee.last_name, _role.title, _role.id
+     FROM employee INNER JOIN _role ON employee.role_id = _role.id`, function (err, results) {
+        if (err) {
+            console.log(err);
+        }
+        const employeeArr = results.map(({ first_name, last_name }) => ({ name: first_name + " " + last_name }));
+        const roleArr = results.map(({ title, id }) => ({ name: title, value: id }));
+        inquirer
+            .prompt([
+                {
+                    type: 'list',
+                    name: 'update_name',
+                    message: "Which employee's role do you want to update?",
+                    choices: employeeArr
+                },
+                {
+                    type: 'list',
+                    name: 'update_role',
+                    message: "Which role do you want to assign the selected employee?",
+                    choices: roleArr
+                },
+            ])
+            .then((response) => {
+                const split = response.update_name.split(" ")
+                const lastName = split[1];
+                db.query(`
+            UPDATE employee
+            SET role_id = ${response.update_role}
+            WHERE last_name = "${lastName}";
+            `, function (err, results) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    console.log(`${response.update_name}'s role was updated.`);
+                    init();
+                }
+                )
+            })
+    })
 }
 function viewAllRoles() {
     const joinRole = `
@@ -176,8 +210,6 @@ function viewAllRoles() {
         console.table(results);
         init();
     })
-
-
 }
 function addRole() {
     inquirer
@@ -194,7 +226,6 @@ function viewAllDept() {
         console.table(results);
         init();
     })
-
 }
 function addDepartment() {
     inquirer
