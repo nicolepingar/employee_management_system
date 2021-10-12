@@ -24,14 +24,3 @@ VALUES
     ("Sonja", "Morgan", 3, null),
     ("Karen", "Huger", 4, null),
     ("Teresa", "Guidice", 5, null);
-
--- SELECT
---     employee.first_name,
---     employee.last_name,
---     _role.title,
---     department.department_name,
---     _role.salary
--- FROM
---     employee
---     INNER JOIN _role ON employee.role_id = _role.title
---     INNER JOIN department ON _role.department_id = department.department_name;

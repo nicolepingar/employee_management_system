@@ -27,40 +27,6 @@ const addDepartmentQ = [
         }
     }
 ]
-const addRoleQ = [
-    {
-        type: 'input',
-        name: 'role_name',
-        message: "What is the name of the role?",
-        validate: input => {
-            if (input) {
-                return true;
-            } else {
-                console.log("Please enter a role.");
-                return false;
-            }
-        }
-    },
-    {
-        type: 'input',
-        name: 'role_salary',
-        message: "What is the salary of the role?",
-        validate: input => {
-            if (input) {
-                return true;
-            } else {
-                console.log("Please enter a salary.");
-                return false;
-            }
-        }
-    },
-    {
-        type: 'list',
-        name: 'department role',
-        message: "Which department does the role belong to?",
-        choices: ["Engineering", "Finance", "Legal", "Sales", "Service"]
-    }
-]
 const addEmployeeQ = [
     {
         type: 'input',
@@ -129,8 +95,8 @@ function viewAllEmp() {
     const joinEmp = `
     SELECT employee.first_name, employee.last_name, _role.title, department.department_name, _role.salary 
     FROM employee 
-    INNER JOIN _role ON employee.role_id = _role.id 
-    INNER JOIN department ON _role.department_id = department.id`
+    INNER JOIN _role ON employee.role_id = _role.id
+    INNER JOIN department ON _role.department_id = department.id;`
     db.query(joinEmp, function (err, results) {
         if (err) {
             console.log(err);
@@ -140,6 +106,18 @@ function viewAllEmp() {
     })
 }
 function addEmployee() {
+    const joinEmp = `
+    SELECT _role.title, employee.first_name, employee.last_name, manager_id
+    FROM employee
+    JOIN _role ON employee.role_id = _role.id
+    JOIN employee ON manager_id = role_id`
+    db.query(joinEmp, function (err, results) {
+        if (err) {
+            console.log(err);
+        }
+        console.table(results);
+        // init();
+    })
     inquirer
         .prompt(addEmployeeQ)
         .then((response) => {
@@ -212,11 +190,59 @@ function viewAllRoles() {
     })
 }
 function addRole() {
-    inquirer
-        .prompt(addRoleQ)
-        .then((response) => {
-
-        })
+    db.query(`SELECT * FROM department`, function (err, results) {
+        if (err) {
+            console.log(err);
+        }
+        const departmentArr = results.map(({ department_name, id }) => ({ name: department_name, value: id }));
+        inquirer
+            .prompt([
+                {
+                    type: 'input',
+                    name: 'role_name',
+                    message: "What is the name of the role?",
+                    validate: input => {
+                        if (input) {
+                            return true;
+                        } else {
+                            console.log("Please enter a role.");
+                            return false;
+                        }
+                    }
+                },
+                {
+                    type: 'input',
+                    name: 'role_salary',
+                    message: "What is the salary of the role?",
+                    validate: input => {
+                        if (input) {
+                            return true;
+                        } else {
+                            console.log("Please enter a salary.");
+                            return false;
+                        }
+                    }
+                },
+                {
+                    type: 'list',
+                    name: 'department_role',
+                    message: "Which department does the role belong to?",
+                    choices: departmentArr
+                }
+            ])
+            .then((response) => {
+                db.query(`
+            INSERT INTO _role (title, salary, department_id)
+            VALUES ("${response.role_name}", ${response.role_salary}, ${response.department_role});
+            `, function (err, results) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    console.log(`${response.role_name} was added to the database.`);
+                    init();
+                })
+            })
+    })
 }
 function viewAllDept() {
     db.query('SELECT * FROM department', function (err, results) {
