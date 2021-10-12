@@ -67,7 +67,7 @@ const addEmployeeQ = [
         choices: []
     }
 ]
-console.log("Welcome to employee manager");
+console.log("Welcome to employee manager.");
 function init() {
     inquirer
         .prompt(questionMain)
@@ -93,21 +93,23 @@ function init() {
 }
 function viewAllEmp() {
     const joinEmp = `
-    SELECT employee.first_name, employee.last_name, _role.title, department.department_name, _role.salary 
+    SELECT employee.first_name, employee.last_name, _role.title, department.department_name, _role.salary, CONCAT (manager.first_name, " ", manager.last_name) AS manager
     FROM employee 
     INNER JOIN _role ON employee.role_id = _role.id
-    INNER JOIN department ON _role.department_id = department.id;`
+    INNER JOIN department ON _role.department_id = department.id
+    LEFT JOIN employee manager ON employee.manager_id = manager.id;`
     db.query(joinEmp, function (err, results) {
         if (err) {
             console.log(err);
         }
+        console.log("--------------------------------------------------------------------------------");
         console.table(results);
         init();
     })
 }
 function addEmployee() {
     const joinEmp = `
-    SELECT _role.title, employee.first_name, employee.last_name, manager_id
+    SELECT _role.title, employee.first_name, employee.last_name, manager_id, 
     FROM employee
     JOIN _role ON employee.role_id = _role.id
     JOIN employee ON manager_id = role_id`
